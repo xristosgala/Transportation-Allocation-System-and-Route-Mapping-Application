@@ -4,3 +4,4 @@ openpyxl==3.1.5
 pulp==2.9.0
 openrouteservice==2.3.3
 streamlit==1.22.0
+streamlit-folium==0.10.0
