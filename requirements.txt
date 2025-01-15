@@ -3,7 +3,4 @@ numpy
 folium==0.12.1
 openpyxl
 pulp==2.7.0
-streamlit==1.23.1
-pyngrok
 openrouteservice==2.3.0
-streamlit-folium
