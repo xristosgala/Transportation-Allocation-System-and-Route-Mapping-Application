@@ -267,4 +267,4 @@ if supply_data is not None and demand_data is not None and driver_data is not No
         # Serve the map as an iframe
         st.components.v1.html(html_content, width=700, height=500)
     else:
-            st.error("No optimal solution found.")
+            st.error("No optimal solution found. Please, change the data.")
