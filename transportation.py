@@ -201,8 +201,8 @@ if supply_data is not None and demand_data is not None and driver_data is not No
 
     # Fetch and draw routes between supply and demand
     for route_info in saved_routes:
-        supply_index = route_info['supply'] - 1  # Adjust index (0-based)
-        demand_index = route_info['demand'] - 1  # Adjust index (0-based)
+        supply_index = route_info['supplier'] - 1  # Adjust index (0-based)
+        demand_index = route_info['client'] - 1  # Adjust index (0-based)
 
         # Create a unique identifier for this driver
         driver_id = route_info['driver']
