@@ -12,15 +12,15 @@ st.title("Transportation Management App")
 st.header("1. Upload Your Datasets")
 
 # Upload the three CSV files
-supply_data = st.file_uploader("Choose the Supply Data CSV file", type=["csv"])
-demand_data = st.file_uploader("Choose the Demand Data CSV file", type=["csv"])
+supplier_data = st.file_uploader("Choose the supplier Data CSV file", type=["csv"])
+client_data = st.file_uploader("Choose the client Data CSV file", type=["csv"])
 driver_data = st.file_uploader("Choose the Driver Data CSV file", type=["csv"])
 cost_data = st.file_uploader("Choose the Cost Data CSV file", type=["csv"])
 
-if supply_data is not None and demand_data is not None and driver_data is not None and cost_data is not None:
+if supplier_data is not None and client_data is not None and driver_data is not None and cost_data is not None:
     # Load the datasets
-    supply_df = pd.read_csv(supply_data)
-    demand_df = pd.read_csv(demand_data)
+    supplier_df = pd.read_csv(supplier_data)
+    client_df = pd.read_csv(client_data)
     drivers_df = pd.read_csv(driver_data)
     cost_df = pd.read_csv(cost_data)
 
@@ -33,19 +33,19 @@ if supply_data is not None and demand_data is not None and driver_data is not No
     client = openrouteservice.Client(key=api_key)
 
     # Prepare coordinates
-    supply_coords = list(zip(supply_df["Longitude"], supply_df["Latitude"]))
-    demand_coords = list(zip(demand_df["Longitude"], demand_df["Latitude"]))
+    supplier_coords = list(zip(supplier_df["Longitude"], supplier_df["Latitude"]))
+    client_coords = list(zip(client_df["Longitude"], client_df["Latitude"]))
 
     # Create a matrix of travel times/distances
     travel_time_matrix = []
 
-    for supply in supply_coords:
+    for supplier in supplier_coords:
         row = []
-        for demand in demand_coords:
+        for client in client_coords:
             try:
                 # Fetch travel data from ORS
                 route = client.directions(
-                    coordinates=[supply, demand],
+                    coordinates=[supplier, client],
                     profile='driving-car',  # Mode of transportation: car
                     format='geojson'
                 )
@@ -67,58 +67,58 @@ if supply_data is not None and demand_data is not None and driver_data is not No
 
                 row.append(travel_time)
             except Exception as e:
-                print(f"Error processing supply {supply} and demand {demand}: {e}")
+                print(f"Error processing supplier {supplier} and client {client}: {e}")
                 row.append(None)  # Append None if an error occurs
 
         travel_time_matrix.append(row)
 
     # Save travel time matrix to a DataFrame
-    travel_time_df = pd.DataFrame(travel_time_matrix, columns=demand_df["Location"], index=supply_df["Location"])
+    travel_time_df = pd.DataFrame(travel_time_matrix, columns=client_df["Location"], index=supplier_df["Location"])
 
     # Define the data
-    supply = list(supply_df['Supply'])  # Supply at Supply1, Supply2
-    demand = list(demand_df['Demand'])  # Demand at Demand1, Demand2, Demand3
+    supplier = list(supplier_df['supplier'])  # supplier at supplier1, supplier2
+    client = list(client_df['client'])  # client at client1, client2, client3
     driver_hours = list(drivers_df['Working Hours'])  # Maximum hours for each driver
     driver_capacity = list(drivers_df['Max Load (units)'])  # Max capacity for each driver
 
-    # Number of supply points, demand points, and drivers
-    num_supply = len(supply)
-    num_demand = len(demand)
+    # Number of supplier points, client points, and drivers
+    num_supplier = len(supplier)
+    num_client = len(client)
     num_drivers = len(driver_hours)
 
     # Create the Linear Programming problem
-    prob = LpProblem("Supply-Demand Allocation with Drivers", LpMinimize)
+    prob = LpProblem("supplier-client Allocation with Drivers", LpMinimize)
 
     # Decision variables
-    x = [[[LpVariable(f"x_{i}_{j}_{k}", lowBound=0, cat="Continuous") for k in range(num_drivers)] for j in range(num_demand)] for i in range(num_supply)]
-    y = [[[LpVariable(f"y_{i}_{j}_{k}", cat="Binary") for k in range(num_drivers)] for j in range(num_demand)] for i in range(num_supply)]
+    x = [[[LpVariable(f"x_{i}_{j}_{k}", lowBound=0, cat="Continuous") for k in range(num_drivers)] for j in range(num_client)] for i in range(num_supplier)]
+    y = [[[LpVariable(f"y_{i}_{j}_{k}", cat="Binary") for k in range(num_drivers)] for j in range(num_client)] for i in range(num_supplier)]
 
     # Objective Function: Minimize transportation cost
-    prob += lpSum(x[i][j][k] * cost_df.iloc[i, j] for i in range(num_supply) for j in range(num_demand) for k in range(num_drivers))
+    prob += lpSum(x[i][j][k] * cost_df.iloc[i, j] for i in range(num_supplier) for j in range(num_client) for k in range(num_drivers))
 
-    # Constraints: Ensure supply is not exceeded
-    for i in range(num_supply):
-        prob += lpSum(x[i][j][k] for j in range(num_demand) for k in range(num_drivers)) <= supply[i], f"Supply_Constraint_{i}"
+    # Constraints: Ensure supplier is not exceeded
+    for i in range(num_supplier):
+        prob += lpSum(x[i][j][k] for j in range(num_client) for k in range(num_drivers)) <= supplier[i], f"supplier_Constraint_{i}"
 
-    # Constraints: Ensure demand is fully met
-    for j in range(num_demand):
-        prob += lpSum(x[i][j][k] for i in range(num_supply) for k in range(num_drivers)) == demand[j], f"Demand_Constraint_{j}"
+    # Constraints: Ensure client is fully met
+    for j in range(num_client):
+        prob += lpSum(x[i][j][k] for i in range(num_supplier) for k in range(num_drivers)) == client[j], f"client_Constraint_{j}"
 
     # Constraints: Driver working hours
     for k in range(num_drivers):
-        prob += lpSum(y[i][j][k] * travel_time_df.iloc[i, j] for i in range(num_supply) for j in range(num_demand)) <= driver_hours[k], f"Driver_Hours_Constraint_{k}"
+        prob += lpSum(y[i][j][k] * travel_time_df.iloc[i, j] for i in range(num_supplier) for j in range(num_client)) <= driver_hours[k], f"Driver_Hours_Constraint_{k}"
 
     # Constraints: Transport-specific quantity limit (x[i][j][k] <= driver_capacity[k])
-    for i in range(num_supply):
-        for j in range(num_demand):
+    for i in range(num_supplier):
+        for j in range(num_client):
             for k in range(num_drivers):
                 prob += x[i][j][k] <= driver_capacity[k], f"Transport_Limit_Constraint_{i}_{j}_{k}"
 
     # Constraints: Link x and y (y is 1 if any quantity is delivered by driver k)
-    for i in range(num_supply):
-        for j in range(num_demand):
+    for i in range(num_supplier):
+        for j in range(num_client):
             for k in range(num_drivers):
-                prob += x[i][j][k] <= y[i][j][k] * demand[j], f"Link_x_y_Constraint_{i}_{j}_{k}"
+                prob += x[i][j][k] <= y[i][j][k] * client[j], f"Link_x_y_Constraint_{i}_{j}_{k}"
 
     # Solve the problem
     prob.solve()
@@ -130,8 +130,8 @@ if supply_data is not None and demand_data is not None and driver_data is not No
         st.success(f"Status: {LpStatus[prob.status]}")
         st.subheader("2. Problem Results")
         allocation_output = ""
-        for i in range(num_supply):
-            for j in range(num_demand):
+        for i in range(num_supplier):
+            for j in range(num_client):
                 for k in range(num_drivers):
                     if value(x[i][j][k]) > 0:
                         allocation_output += f"Driver {k + 1} delivers {value(x[i][j][k])} units from Supplier {i + 1} to Client {j + 1}\n"
@@ -152,9 +152,9 @@ if supply_data is not None and demand_data is not None and driver_data is not No
     routes = []
 
     # Assuming x is the decision variable from your optimization problem
-    # Example: x[i][j][k] indicates if driver k is delivering from supply i to demand j
-    for i in range(num_supply):
-        for j in range(num_demand):
+    # Example: x[i][j][k] indicates if driver k is delivering from supplier i to client j
+    for i in range(num_supplier):
+        for j in range(num_client):
             for k in range(num_drivers):
                 if value(x[i][j][k]) > 0:
                     routes.append({
@@ -171,38 +171,38 @@ if supply_data is not None and demand_data is not None and driver_data is not No
     def generate_random_color():
         return "#{:02x}{:02x}{:02x}".format(random.randint(0, 255), random.randint(0, 255), random.randint(0, 255))
 
-    # Create a folium map centered at the midpoint of supply and demand coordinates
-    map_center = [(supply_coords[0][1] + demand_coords[0][1]) / 2,  # Latitude
-                  (supply_coords[0][0] + demand_coords[0][0]) / 2]  # Longitude
+    # Create a folium map centered at the midpoint of supplier and client coordinates
+    map_center = [(supplier_coords[0][1] + client_coords[0][1]) / 2,  # Latitude
+                  (supplier_coords[0][0] + client_coords[0][0]) / 2]  # Longitude
     mymap = folium.Map(location=map_center, zoom_start=12,     tiles='CartoDB positron')
 
-    supply_point_num = 1
-    # Add supply points to the map
-    for supply in supply_coords:
+    supplier_point_num = 1
+    # Add supplier points to the map
+    for supplier in supplier_coords:
         folium.Marker(
-            location=[supply[1], supply[0]],  # Latitude, Longitude for folium
-            popup=f"Supplier Point {supply_point_num}",
+            location=[supplier[1], supplier[0]],  # Latitude, Longitude for folium
+            popup=f"Supplier Point {supplier_point_num}",
             icon=folium.Icon(color='blue', icon='info-sign')
         ).add_to(mymap)
-        supply_point_num += 1
+        supplier_point_num += 1
 
-    demand_point_num = 1
-    # Add demand points to the map
-    for demand in demand_coords:
+    client_point_num = 1
+    # Add client points to the map
+    for client in client_coords:
         folium.Marker(
-            location=[demand[1], demand[0]],  # Latitude, Longitude for folium
-            popup=f"Client Point {demand_point_num}",
+            location=[client[1], client[0]],  # Latitude, Longitude for folium
+            popup=f"Client Point {client_point_num}",
             icon=folium.Icon(color='green', icon='info-sign')
         ).add_to(mymap)
-        demand_point_num += 1
+        client_point_num += 1
 
-    # Mapping supply-demand pair to a unique color (same color for each driver)
+    # Mapping supplier-client pair to a unique color (same color for each driver)
     driver_colors = {}
 
-    # Fetch and draw routes between supply and demand
+    # Fetch and draw routes between supplier and client
     for route_info in saved_routes:
-        supply_index = route_info['supplier'] - 1  # Adjust index (0-based)
-        demand_index = route_info['client'] - 1  # Adjust index (0-based)
+        supplier_index = route_info['supplier'] - 1  # Adjust index (0-based)
+        client_index = route_info['client'] - 1  # Adjust index (0-based)
 
         # Create a unique identifier for this driver
         driver_id = route_info['driver']
@@ -214,8 +214,8 @@ if supply_data is not None and demand_data is not None and driver_data is not No
         # Get route data from ORS
         try:
             route = client.directions(
-                coordinates=[(supply_coords[supply_index][0], supply_coords[supply_index][1]),
-                            (demand_coords[demand_index][0], demand_coords[demand_index][1])],
+                coordinates=[(supplier_coords[supplier_index][0], supplier_coords[supplier_index][1]),
+                            (client_coords[client_index][0], client_coords[client_index][1])],
                 profile='driving-car',
                 format='geojson'
             )
@@ -229,11 +229,11 @@ if supply_data is not None and demand_data is not None and driver_data is not No
                 route_coords = [(coord[1], coord[0]) for coord in route_coords]  # (Latitude, Longitude)
 
                 # Prepare popup content for all drivers on this route
-                popup_content = f"<b>Route from Supplier {route_info['supply']} to Client {route_info['demand']}</b><br>"
+                popup_content = f"<b>Route from Supplier {route_info['supplier']} to Client {route_info['client']}</b><br>"
                 popup_content += "<ul>"
                 for other_route in saved_routes:
-                    if (other_route['supply'] == route_info['supply'] and
-                            other_route['demand'] == route_info['demand']):
+                    if (other_route['supplier'] == route_info['supplier'] and
+                            other_route['client'] == route_info['client']):
                         popup_content += f"<li>Driver {other_route['driver']}: {other_route['quantity']} quantity</li>"
                 popup_content += "</ul>"
 
