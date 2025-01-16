@@ -134,7 +134,7 @@ if supply_data is not None and demand_data is not None and driver_data is not No
             for j in range(num_demand):
                 for k in range(num_drivers):
                     if value(x[i][j][k]) > 0:
-                        allocation_output += f"Driver {k + 1} delivers {value(x[i][j][k])} units from Supply {i + 1} to Demand {j + 1}\n"
+                        allocation_output += f"Driver {k + 1} delivers {value(x[i][j][k])} units from Supplier {i + 1} to Client {j + 1}\n"
         st.text(allocation_output)  # Display allocation in text format
         st.write(f"Total Cost: {value(prob.objective)}")
 
@@ -159,8 +159,8 @@ if supply_data is not None and demand_data is not None and driver_data is not No
                 if value(x[i][j][k]) > 0:
                     routes.append({
                         "driver": k+1,
-                        "supply": i+1,
-                        "demand": j+1,
+                        "supplier": i+1,
+                        "client": j+1,
                         "quantity": value(x[i][j][k])
                     })
 
@@ -181,7 +181,7 @@ if supply_data is not None and demand_data is not None and driver_data is not No
     for supply in supply_coords:
         folium.Marker(
             location=[supply[1], supply[0]],  # Latitude, Longitude for folium
-            popup=f"Supply Point {supply_point_num}",
+            popup=f"Supplier Point {supply_point_num}",
             icon=folium.Icon(color='blue', icon='info-sign')
         ).add_to(mymap)
         supply_point_num += 1
@@ -191,7 +191,7 @@ if supply_data is not None and demand_data is not None and driver_data is not No
     for demand in demand_coords:
         folium.Marker(
             location=[demand[1], demand[0]],  # Latitude, Longitude for folium
-            popup=f"Demand Point {demand_point_num}",
+            popup=f"Client Point {demand_point_num}",
             icon=folium.Icon(color='green', icon='info-sign')
         ).add_to(mymap)
         demand_point_num += 1
@@ -229,7 +229,7 @@ if supply_data is not None and demand_data is not None and driver_data is not No
                 route_coords = [(coord[1], coord[0]) for coord in route_coords]  # (Latitude, Longitude)
 
                 # Prepare popup content for all drivers on this route
-                popup_content = f"<b>Route from Supply {route_info['supply']} to Demand {route_info['demand']}</b><br>"
+                popup_content = f"<b>Route from Supplier {route_info['supply']} to Client {route_info['demand']}</b><br>"
                 popup_content += "<ul>"
                 for other_route in saved_routes:
                     if (other_route['supply'] == route_info['supply'] and
@@ -249,9 +249,9 @@ if supply_data is not None and demand_data is not None and driver_data is not No
                     popup=folium.Popup(popup_content, max_width=300)
                 ).add_to(mymap)
             else:
-                print(f"No route found for supply {route_info['supply']} and demand {route_info['demand']}")
+                print(f"No route found for supplier {route_info['supply']} and client {route_info['demand']}")
         except Exception as e:
-            print(f"Error processing route for supply {route_info['supply']} and demand {route_info['demand']}: {e}")
+            print(f"Error processing route for supplier {route_info['supply']} and supplier {route_info['demand']}: {e}")
 
     # Save the map to an HTML file
     static_map_path = "static_map.html"
