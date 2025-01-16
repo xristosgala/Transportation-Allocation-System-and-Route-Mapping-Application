@@ -184,7 +184,7 @@ if supply_data is not None and demand_data is not None and driver_data is not No
             popup=f"Supply Point {supplier_point_num}",
             icon=folium.Icon(color='blue', icon='info-sign')
         ).add_to(mymap)
-        supply_point_num += 1
+        supplier_point_num += 1
 
     client_point_num = 1
     # Add demand points to the map
@@ -194,7 +194,7 @@ if supply_data is not None and demand_data is not None and driver_data is not No
             popup=f"Demand Point {client_point_num}",
             icon=folium.Icon(color='green', icon='info-sign')
         ).add_to(mymap)
-        demand_point_num += 1
+        client_point_num += 1
 
     # Mapping supply-demand pair to a unique color (same color for each driver)
     driver_colors = {}
