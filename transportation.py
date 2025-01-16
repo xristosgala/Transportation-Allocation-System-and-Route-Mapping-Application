@@ -229,7 +229,7 @@ if supply_data is not None and demand_data is not None and driver_data is not No
                 route_coords = [(coord[1], coord[0]) for coord in route_coords]  # (Latitude, Longitude)
 
                 # Prepare popup content for all drivers on this route
-                popup_content = f"<b>Route from Supplier {route_info['supply']} to Client {route_info['demand']}</b><br>"
+                popup_content = f"<b>Route from Supplier {route_info['supplier']} to Client {route_info['client']}</b><br>"
                 popup_content += "<ul>"
                 for other_route in saved_routes:
                     if (other_route['supplier'] == route_info['supplier'] and
@@ -246,7 +246,7 @@ if supply_data is not None and demand_data is not None and driver_data is not No
                     color=route_color,
                     weight=3,
                     opacity=0.8,
-                    popup=f"Driver {route_info['driver']} - from supplier {route_info['supplier']} to client {route_info['client']} with {route_info['quantity']} quantity"
+                    popup=popup_content
                 ).add_to(mymap)
             else:
                 print(f"No route found for supplier {route_info['supplier']} and client {route_info['client']}")
