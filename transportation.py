@@ -76,10 +76,10 @@ if supply_data is not None and demand_data is not None and driver_data is not No
     travel_time_df = pd.DataFrame(travel_time_matrix, columns=demand_df["Location"], index=supply_df["Location"])
 
     # Define the data
-    supply = list(supply_df['Supply'])  # Supply at Supply1, Supply2
-    demand = list(demand_df['Demand'])  # Demand at Demand1, Demand2, Demand3
+    supply = list(supply_df['Supply'])  # Supply at Supplier1, Supplier2
+    demand = list(demand_df['Demand'])  # Demand at Client1, Client2, Client3
     driver_hours = list(drivers_df['Working Hours'])  # Maximum hours for each driver
-    driver_capacity = list(drivers_df['Max Load (units)'])  # Max capacity for each driver
+    driver_capacity = list(drivers_df['Max Load'])  # Max capacity for each driver
 
     # Number of supply points, demand points, and drivers
     num_supply = len(supply)
@@ -134,7 +134,7 @@ if supply_data is not None and demand_data is not None and driver_data is not No
             for j in range(num_demand):
                 for k in range(num_drivers):
                     if value(x[i][j][k]) > 0:
-                        allocation_output += f"Driver {k + 1} delivers {value(x[i][j][k])} units from Supply {i + 1} to Demand {j + 1}\n"
+                        allocation_output += f"Driver {k + 1} delivers {value(x[i][j][k])} units from Supplier {i + 1} to Client {j + 1}\n"
         st.text(allocation_output)  # Display allocation in text format
         st.write(f"Total Cost: {value(prob.objective)}")
 
@@ -159,8 +159,8 @@ if supply_data is not None and demand_data is not None and driver_data is not No
                 if value(x[i][j][k]) > 0:
                     routes.append({
                         "driver": k+1,
-                        "supply": i+1,
-                        "demand": j+1,
+                        "supplier": i+1,
+                        "client": j+1,
                         "quantity": value(x[i][j][k])
                     })
 
@@ -176,22 +176,22 @@ if supply_data is not None and demand_data is not None and driver_data is not No
                   (supply_coords[0][0] + demand_coords[0][0]) / 2]  # Longitude
     mymap = folium.Map(location=map_center, zoom_start=12,     tiles='CartoDB positron')
 
-    supply_point_num = 1
+    supplier_point_num = 1
     # Add supply points to the map
-    for supply in supply_coords:
+    for supplier in supply_coords:
         folium.Marker(
-            location=[supply[1], supply[0]],  # Latitude, Longitude for folium
-            popup=f"Supply Point {supply_point_num}",
+            location=[supplier[1], supplier[0]],  # Latitude, Longitude for folium
+            popup=f"Supply Point {supplier_point_num}",
             icon=folium.Icon(color='blue', icon='info-sign')
         ).add_to(mymap)
         supply_point_num += 1
 
-    demand_point_num = 1
+    client_point_num = 1
     # Add demand points to the map
-    for demand in demand_coords:
+    for client in demand_coords:
         folium.Marker(
-            location=[demand[1], demand[0]],  # Latitude, Longitude for folium
-            popup=f"Demand Point {demand_point_num}",
+            location=[client[1], client[0]],  # Latitude, Longitude for folium
+            popup=f"Demand Point {client_point_num}",
             icon=folium.Icon(color='green', icon='info-sign')
         ).add_to(mymap)
         demand_point_num += 1
@@ -201,8 +201,8 @@ if supply_data is not None and demand_data is not None and driver_data is not No
 
     # Fetch and draw routes between supply and demand
     for route_info in saved_routes:
-        supply_index = route_info['supply'] - 1  # Adjust index (0-based)
-        demand_index = route_info['demand'] - 1  # Adjust index (0-based)
+        supply_index = route_info['supplier'] - 1  # Adjust index (0-based)
+        demand_index = route_info['client'] - 1  # Adjust index (0-based)
 
         # Create a unique identifier for this driver
         driver_id = route_info['driver']
@@ -232,8 +232,8 @@ if supply_data is not None and demand_data is not None and driver_data is not No
                 popup_content = f"<b>Route from Supplier {route_info['supply']} to Client {route_info['demand']}</b><br>"
                 popup_content += "<ul>"
                 for other_route in saved_routes:
-                    if (other_route['supply'] == route_info['supply'] and
-                            other_route['demand'] == route_info['demand']):
+                    if (other_route['supplier'] == route_info['supplier'] and
+                            other_route['client'] == route_info['client']):
                         popup_content += f"<li>Driver {other_route['driver']}: {other_route['quantity']} quantity</li>"
                 popup_content += "</ul>"
 
@@ -246,12 +246,12 @@ if supply_data is not None and demand_data is not None and driver_data is not No
                     color=route_color,
                     weight=3,
                     opacity=0.8,
-                    popup=f"Driver {route_info['driver']} - from supply point {route_info['supply']} to demand point {route_info['demand']} with {route_info['quantity']} quantity"
+                    popup=f"Driver {route_info['driver']} - from supplier {route_info['supplier']} to client {route_info['client']} with {route_info['quantity']} quantity"
                 ).add_to(mymap)
             else:
-                print(f"No route found for supply {route_info['supply']} and demand {route_info['demand']}")
+                print(f"No route found for supplier {route_info['supplier']} and client {route_info['client']}")
         except Exception as e:
-            print(f"Error processing route for supply {route_info['supply']} and demand {route_info['demand']}: {e}")
+            print(f"Error processing route for supplier {route_info['supplier']} and client {route_info['client']}: {e}")
 
     # Save the map to an HTML file
     static_map_path = "static_map.html"
