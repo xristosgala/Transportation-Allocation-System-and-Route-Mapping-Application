@@ -145,128 +145,126 @@ if supply_data is not None and demand_data is not None and driver_data is not No
             duals_slacks += f"{name}: Dual = {constraint.pi}, Slack = {constraint.slack}\n"
         st.text(duals_slacks)
 
+        # Collecting the routes
+        routes = []
+    
+        # Assuming x is the decision variable from your optimization problem
+        # Example: x[i][j][k] indicates if driver k is delivering from supply i to demand j
+        for i in range(num_supply):
+            for j in range(num_demand):
+                for k in range(num_drivers):
+                    if value(x[i][j][k]) > 0:
+                        routes.append({
+                            "driver": k+1,
+                            "supply": i+1,
+                            "demand": j+1,
+                            "quantity": value(x[i][j][k])
+                        })
+    
+        # Now, you can save the result in a variable (e.g., `saved_routes`)
+        saved_routes = routes  # This is your saved result in a variable
+    
+        # Function to generate a random color in hex format
+        def generate_random_color():
+            return "#{:02x}{:02x}{:02x}".format(random.randint(0, 255), random.randint(0, 255), random.randint(0, 255))
+    
+        # Create a folium map centered at the midpoint of supply and demand coordinates
+        map_center = [(supply_coords[0][1] + demand_coords[0][1]) / 2,  # Latitude
+                      (supply_coords[0][0] + demand_coords[0][0]) / 2]  # Longitude
+        mymap = folium.Map(location=map_center, zoom_start=12,     tiles='CartoDB positron')
+    
+        supply_point_num = 1
+        # Add supply points to the map
+        for supply in supply_coords:
+            folium.Marker(
+                location=[supply[1], supply[0]],  # Latitude, Longitude for folium
+                popup=f"Supplier {supply_point_num}",
+                icon=folium.Icon(color='blue', icon='info-sign')
+            ).add_to(mymap)
+            supply_point_num += 1
+    
+        demand_point_num = 1
+        # Add demand points to the map
+        for demand in demand_coords:
+            folium.Marker(
+                location=[demand[1], demand[0]],  # Latitude, Longitude for folium
+                popup=f"Client {demand_point_num}",
+                icon=folium.Icon(color='green', icon='info-sign')
+            ).add_to(mymap)
+            demand_point_num += 1
+    
+        # Mapping supply-demand pair to a unique color (same color for each driver)
+        driver_colors = {}
+    
+        # Fetch and draw routes between supply and demand
+        for route_info in saved_routes:
+            supply_index = route_info['supply'] - 1  # Adjust index (0-based)
+            demand_index = route_info['demand'] - 1  # Adjust index (0-based)
+    
+            # Create a unique identifier for this driver
+            driver_id = route_info['driver']
+    
+            # If this driver hasn't been assigned a color, assign one
+            if driver_id not in driver_colors:
+                driver_colors[driver_id] = generate_random_color()
+    
+            # Get route data from ORS
+            try:
+                route = client.directions(
+                    coordinates=[(supply_coords[supply_index][0], supply_coords[supply_index][1]),
+                                (demand_coords[demand_index][0], demand_coords[demand_index][1])],
+                    profile='driving-car',
+                    format='geojson'
+                )
+    
+                # Check if the response contains routes
+                if 'features' in route and len(route['features']) > 0:
+                    # Extract coordinates of the route
+                    route_coords = route['features'][0]['geometry']['coordinates']
+    
+                    # Convert route coordinates to (lat, lon) for folium
+                    route_coords = [(coord[1], coord[0]) for coord in route_coords]  # (Latitude, Longitude)
+    
+                    # Prepare popup content for all drivers on this route
+                    popup_content = f"<b>Route from Supplier {route_info['supply']} to Client {route_info['demand']}</b><br>"
+                    popup_content += "<ul>"
+                    for other_route in saved_routes:
+                        if (other_route['supply'] == route_info['supply'] and
+                                other_route['demand'] == route_info['demand']):
+                            popup_content += f"<li>Driver {other_route['driver']}: {other_route['quantity']} quantity</li>"
+                    popup_content += "</ul>"
+    
+                    # Use the preassigned color for this driver
+                    route_color = driver_colors[driver_id]
+    
+                    # Add the route to the map
+                    folium.PolyLine(
+                        locations=route_coords,
+                        color=route_color,
+                        weight=3,
+                        opacity=0.8,
+                        popup=folium.Popup(popup_content, max_width=300)
+                    ).add_to(mymap)
+                else:
+                    print(f"No route found for Supplier {route_info['supply']} and Client {route_info['demand']}")
+            except Exception as e:
+                print(f"Error processing route for Supplier {route_info['supply']} and Client {route_info['demand']}: {e}")
+    
+        # Save the map to an HTML file
+        static_map_path = "static_map.html"
+        mymap.save(static_map_path)
+    
+        # Read and serve the map as static content
+        st.subheader("4. Route Map")
+    
+        # Get the absolute path of the saved HTML file
+        html_path = os.path.abspath(static_map_path)
+    
+        # Open the HTML file and read its content
+        with open(html_path, "r") as file:
+            html_content = file.read()
+    
+        # Serve the map as an iframe
+        st.components.v1.html(html_content, width=700, height=500)
     else:
-        st.error("No optimal solution found.")
-
-    # Collecting the routes
-    routes = []
-
-    # Assuming x is the decision variable from your optimization problem
-    # Example: x[i][j][k] indicates if driver k is delivering from supply i to demand j
-    for i in range(num_supply):
-        for j in range(num_demand):
-            for k in range(num_drivers):
-                if value(x[i][j][k]) > 0:
-                    routes.append({
-                        "driver": k+1,
-                        "supply": i+1,
-                        "demand": j+1,
-                        "quantity": value(x[i][j][k])
-                    })
-
-    # Now, you can save the result in a variable (e.g., `saved_routes`)
-    saved_routes = routes  # This is your saved result in a variable
-
-    # Function to generate a random color in hex format
-    def generate_random_color():
-        return "#{:02x}{:02x}{:02x}".format(random.randint(0, 255), random.randint(0, 255), random.randint(0, 255))
-
-    # Create a folium map centered at the midpoint of supply and demand coordinates
-    map_center = [(supply_coords[0][1] + demand_coords[0][1]) / 2,  # Latitude
-                  (supply_coords[0][0] + demand_coords[0][0]) / 2]  # Longitude
-    mymap = folium.Map(location=map_center, zoom_start=12,     tiles='CartoDB positron')
-
-    supply_point_num = 1
-    # Add supply points to the map
-    for supply in supply_coords:
-        folium.Marker(
-            location=[supply[1], supply[0]],  # Latitude, Longitude for folium
-            popup=f"Supplier {supply_point_num}",
-            icon=folium.Icon(color='blue', icon='info-sign')
-        ).add_to(mymap)
-        supply_point_num += 1
-
-    demand_point_num = 1
-    # Add demand points to the map
-    for demand in demand_coords:
-        folium.Marker(
-            location=[demand[1], demand[0]],  # Latitude, Longitude for folium
-            popup=f"Client {demand_point_num}",
-            icon=folium.Icon(color='green', icon='info-sign')
-        ).add_to(mymap)
-        demand_point_num += 1
-
-    # Mapping supply-demand pair to a unique color (same color for each driver)
-    driver_colors = {}
-
-    # Fetch and draw routes between supply and demand
-    for route_info in saved_routes:
-        supply_index = route_info['supply'] - 1  # Adjust index (0-based)
-        demand_index = route_info['demand'] - 1  # Adjust index (0-based)
-
-        # Create a unique identifier for this driver
-        driver_id = route_info['driver']
-
-        # If this driver hasn't been assigned a color, assign one
-        if driver_id not in driver_colors:
-            driver_colors[driver_id] = generate_random_color()
-
-        # Get route data from ORS
-        try:
-            route = client.directions(
-                coordinates=[(supply_coords[supply_index][0], supply_coords[supply_index][1]),
-                            (demand_coords[demand_index][0], demand_coords[demand_index][1])],
-                profile='driving-car',
-                format='geojson'
-            )
-
-            # Check if the response contains routes
-            if 'features' in route and len(route['features']) > 0:
-                # Extract coordinates of the route
-                route_coords = route['features'][0]['geometry']['coordinates']
-
-                # Convert route coordinates to (lat, lon) for folium
-                route_coords = [(coord[1], coord[0]) for coord in route_coords]  # (Latitude, Longitude)
-
-                # Prepare popup content for all drivers on this route
-                popup_content = f"<b>Route from Supplier {route_info['supply']} to Client {route_info['demand']}</b><br>"
-                popup_content += "<ul>"
-                for other_route in saved_routes:
-                    if (other_route['supply'] == route_info['supply'] and
-                            other_route['demand'] == route_info['demand']):
-                        popup_content += f"<li>Driver {other_route['driver']}: {other_route['quantity']} quantity</li>"
-                popup_content += "</ul>"
-
-                # Use the preassigned color for this driver
-                route_color = driver_colors[driver_id]
-
-                # Add the route to the map
-                folium.PolyLine(
-                    locations=route_coords,
-                    color=route_color,
-                    weight=3,
-                    opacity=0.8,
-                    popup=folium.Popup(popup_content, max_width=300)
-                ).add_to(mymap)
-            else:
-                print(f"No route found for Supplier {route_info['supply']} and Client {route_info['demand']}")
-        except Exception as e:
-            print(f"Error processing route for Supplier {route_info['supply']} and Client {route_info['demand']}: {e}")
-
-    # Save the map to an HTML file
-    static_map_path = "static_map.html"
-    mymap.save(static_map_path)
-
-    # Read and serve the map as static content
-    st.subheader("4. Route Map")
-
-    # Get the absolute path of the saved HTML file
-    html_path = os.path.abspath(static_map_path)
-
-    # Open the HTML file and read its content
-    with open(html_path, "r") as file:
-        html_content = file.read()
-
-    # Serve the map as an iframe
-    st.components.v1.html(html_content, width=700, height=500)
-
+            st.error("No optimal solution found.")
