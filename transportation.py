@@ -246,7 +246,7 @@ if supply_data is not None and demand_data is not None and driver_data is not No
                     color=route_color,
                     weight=3,
                     opacity=0.8,
-                    popup=popup_content
+                    popup=folium.Popup(popup_content, max_width=300)
                 ).add_to(mymap)
             else:
                 print(f"No route found for supplier {route_info['supplier']} and client {route_info['client']}")
