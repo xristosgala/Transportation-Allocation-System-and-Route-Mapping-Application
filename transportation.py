@@ -1,3 +1,4 @@
+%%writefile transportation.py
 import streamlit as st
 import pandas as pd
 import openrouteservice
@@ -76,10 +77,10 @@ if supply_data is not None and demand_data is not None and driver_data is not No
     travel_time_df = pd.DataFrame(travel_time_matrix, columns=demand_df["Location"], index=supply_df["Location"])
 
     # Define the data
-    supply = list(supply_df['Supply'])  # Supply at Supplier1, Supplier2
-    demand = list(demand_df['Demand'])  # Demand at Client1, Client2, Client3
+    supply = list(supply_df['Supply'])  # Supply at Supply1, Supply2
+    demand = list(demand_df['Demand'])  # Demand at Demand1, Demand2, Demand3
     driver_hours = list(drivers_df['Working Hours'])  # Maximum hours for each driver
-    driver_capacity = list(drivers_df['Max Load'])  # Max capacity for each driver
+    driver_capacity = list(drivers_df['Max Load (units)'])  # Max capacity for each driver
 
     # Number of supply points, demand points, and drivers
     num_supply = len(supply)
@@ -159,8 +160,8 @@ if supply_data is not None and demand_data is not None and driver_data is not No
                 if value(x[i][j][k]) > 0:
                     routes.append({
                         "driver": k+1,
-                        "supplier": i+1,
-                        "client": j+1,
+                        "supply": i+1,
+                        "demand": j+1,
                         "quantity": value(x[i][j][k])
                     })
 
@@ -176,33 +177,33 @@ if supply_data is not None and demand_data is not None and driver_data is not No
                   (supply_coords[0][0] + demand_coords[0][0]) / 2]  # Longitude
     mymap = folium.Map(location=map_center, zoom_start=12,     tiles='CartoDB positron')
 
-    supplier_point_num = 1
+    supply_point_num = 1
     # Add supply points to the map
-    for supplier in supply_coords:
+    for supply in supply_coords:
         folium.Marker(
-            location=[supplier[1], supplier[0]],  # Latitude, Longitude for folium
-            popup=f"Supplier {supplier_point_num}",
+            location=[supply[1], supply[0]],  # Latitude, Longitude for folium
+            popup=f"Supplier {supply_point_num}",
             icon=folium.Icon(color='blue', icon='info-sign')
         ).add_to(mymap)
-        supplier_point_num += 1
+        supply_point_num += 1
 
-    client_point_num = 1
+    demand_point_num = 1
     # Add demand points to the map
-    for client in demand_coords:
+    for demand in demand_coords:
         folium.Marker(
-            location=[client[1], client[0]],  # Latitude, Longitude for folium
-            popup=f"Client {client_point_num}",
+            location=[demand[1], demand[0]],  # Latitude, Longitude for folium
+            popup=f"Client {demand_point_num}",
             icon=folium.Icon(color='green', icon='info-sign')
         ).add_to(mymap)
-        client_point_num += 1
+        demand_point_num += 1
 
     # Mapping supply-demand pair to a unique color (same color for each driver)
     driver_colors = {}
 
     # Fetch and draw routes between supply and demand
     for route_info in saved_routes:
-        supply_index = route_info['supplier'] - 1  # Adjust index (0-based)
-        demand_index = route_info['client'] - 1  # Adjust index (0-based)
+        supply_index = route_info['supply'] - 1  # Adjust index (0-based)
+        demand_index = route_info['demand'] - 1  # Adjust index (0-based)
 
         # Create a unique identifier for this driver
         driver_id = route_info['driver']
@@ -229,10 +230,11 @@ if supply_data is not None and demand_data is not None and driver_data is not No
                 route_coords = [(coord[1], coord[0]) for coord in route_coords]  # (Latitude, Longitude)
 
                 # Prepare popup content for all drivers on this route
-                popup_content = f"<b>Route from Supplier {route_info['supplier']} to Client {route_info['client']}</b><br>"
+                popup_content = f"<b>Route from Supplier {route_info['supply']} to Client {route_info['demand']}</b><br>"
                 popup_content += "<ul>"
                 for other_route in saved_routes:
-                    if (other_route['supplier'] == route_info['supplier'] and other_route['client'] == route_info['client']):
+                    if (other_route['supply'] == route_info['supply'] and
+                            other_route['demand'] == route_info['demand']):
                         popup_content += f"<li>Driver {other_route['driver']}: {other_route['quantity']} quantity</li>"
                 popup_content += "</ul>"
 
@@ -248,9 +250,9 @@ if supply_data is not None and demand_data is not None and driver_data is not No
                     popup=folium.Popup(popup_content, max_width=300)
                 ).add_to(mymap)
             else:
-                print(f"No route found for supplier {route_info['supplier']} and client {route_info['client']}")
+                print(f"No route found for Supplier {route_info['supply']} and Client {route_info['demand']}")
         except Exception as e:
-            print(f"Error processing route for supplier {route_info['supplier']} and client {route_info['client']}: {e}")
+            print(f"Error processing route for Supplier {route_info['supply']} and Client {route_info['demand']}: {e}")
 
     # Save the map to an HTML file
     static_map_path = "static_map.html"
