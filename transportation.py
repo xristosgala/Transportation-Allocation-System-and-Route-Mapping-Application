@@ -181,7 +181,7 @@ if supply_data is not None and demand_data is not None and driver_data is not No
     for supplier in supply_coords:
         folium.Marker(
             location=[supplier[1], supplier[0]],  # Latitude, Longitude for folium
-            popup=f"Supply Point {supplier_point_num}",
+            popup=f"Supplier {supplier_point_num}",
             icon=folium.Icon(color='blue', icon='info-sign')
         ).add_to(mymap)
         supplier_point_num += 1
@@ -191,7 +191,7 @@ if supply_data is not None and demand_data is not None and driver_data is not No
     for client in demand_coords:
         folium.Marker(
             location=[client[1], client[0]],  # Latitude, Longitude for folium
-            popup=f"Demand Point {client_point_num}",
+            popup=f"Client {client_point_num}",
             icon=folium.Icon(color='green', icon='info-sign')
         ).add_to(mymap)
         client_point_num += 1
@@ -232,8 +232,7 @@ if supply_data is not None and demand_data is not None and driver_data is not No
                 popup_content = f"<b>Route from Supplier {route_info['supplier']} to Client {route_info['client']}</b><br>"
                 popup_content += "<ul>"
                 for other_route in saved_routes:
-                    if (other_route['supplier'] == route_info['supplier'] and
-                            other_route['client'] == route_info['client']):
+                    if (other_route['supplier'] == route_info['supplier'] and other_route['client'] == route_info['client']):
                         popup_content += f"<li>Driver {other_route['driver']}: {other_route['quantity']} quantity</li>"
                 popup_content += "</ul>"
 
