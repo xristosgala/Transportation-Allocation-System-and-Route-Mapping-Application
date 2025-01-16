@@ -146,7 +146,7 @@ if supply_data is not None and demand_data is not None and driver_data is not No
         st.text(duals_slacks)
 
     else:
-        st.Error("No optimal solution found.")
+        st.error("No optimal solution found.")
 
     # Collecting the routes
     routes = []
