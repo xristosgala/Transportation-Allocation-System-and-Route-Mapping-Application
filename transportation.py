@@ -246,7 +246,7 @@ if supply_data is not None and demand_data is not None and driver_data is not No
                     color=route_color,
                     weight=3,
                     opacity=0.8,
-                    popup=f"Driver {route_info['driver']} - from supply point {route_info['supply']} to demand point {route_info['demand']} with {route_info['quantity']} quantity"
+                    popup=folium.Popup(popup_content, max_width=300)
                 ).add_to(mymap)
             else:
                 print(f"No route found for supply {route_info['supply']} and demand {route_info['demand']}")
