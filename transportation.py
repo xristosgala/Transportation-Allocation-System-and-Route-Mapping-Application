@@ -249,9 +249,9 @@ if supply_data is not None and demand_data is not None and driver_data is not No
                     popup=folium.Popup(popup_content, max_width=300)
                 ).add_to(mymap)
             else:
-                print(f"No route found for supplier {route_info['supply']} and client {route_info['demand']}")
+                print(f"No route found for supplier {route_info['supplier']} and client {route_info['client']}")
         except Exception as e:
-            print(f"Error processing route for supplier {route_info['supply']} and supplier {route_info['demand']}: {e}")
+            print(f"Error processing route for supplier {route_info['supplier']} and supplier {route_info['client']}: {e}")
 
     # Save the map to an HTML file
     static_map_path = "static_map.html"
