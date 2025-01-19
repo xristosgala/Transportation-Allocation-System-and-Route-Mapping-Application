@@ -14,20 +14,19 @@ This system implements a **Transportation Allocation Problem** using **Linear Pr
 ## Mathematical Formulation (Linear Programming Model)
 
 Let:
-- $$
-\( S_i \) be the supply at supply point \( i \) for \( i = 1, 2, \dots, m \)
-$$
-- $$ \( D_j \) be the demand at demand point \( j \) for \( j = 1, 2, \dots, n \) $$
-- $$ \( C_{ij} \) be the cost of transporting from supply point \( i \) to demand point \( j \) $$
-- $$ \( x_{ijk} \) be the quantity of goods transported from supply point \( i \) to demand point \( j \) by driver \( k \) $$
-- $$ \( y_{ijk} \) be a binary variable indicating whether driver \( k \) delivers goods from supply point \( i \) to demand point \( j \) $$
-- $$ \( T_{ij} \) be the travel time (in hours) from supply point \( i \) to demand point \( j \) $$
-- $$ \( H_k \) be the maximum working hours available for driver \( k \) $$
-- $$ \( Q_k \) be the maximum load capacity for driver \( k \) $$
+
+- \( S_i \) be the supply at supply point \( i \) for \( i = 1, 2, \dots, m \)
+- \( D_j \) be the demand at demand point \( j \) for \( j = 1, 2, \dots, n \)
+- \( C_{ij} \) be the cost of transporting from supply point \( i \) to demand point \( j \)
+- \( x_{ijk} \) be the quantity of goods transported from supply point \( i \) to demand point \( j \) by driver \( k \)
+- \( y_{ijk} \) be a binary variable indicating whether driver \( k \) delivers goods from supply point \( i \) to demand point \( j \)
+- \( T_{ij} \) be the travel time (in hours) from supply point \( i \) to demand point \( j \)
+- \( H_k \) be the maximum working hours available for driver \( k \)
+- \( Q_k \) be the maximum load capacity for driver \( k \)
 
 ### Decision Variables:
-- $$ \( x_{ijk} \): Continuous decision variable representing the quantity delivered by driver \( k \) from supply point \( i \) to demand point \( j \). $$
-- $$ \( y_{ijk} \): Binary decision variable representing whether driver \( k \) is assigned to deliver from supply point \( i \) to demand point \( j \). $$
+- \( x_{ijk} \): Continuous decision variable representing the quantity delivered by driver \( k \) from supply point \( i \) to demand point \( j \).
+- \( y_{ijk} \): Binary decision variable representing whether driver \( k \) is assigned to deliver from supply point \( i \) to demand point \( j \).
 
 ### Objective Function:
 Minimize the total transportation cost:
