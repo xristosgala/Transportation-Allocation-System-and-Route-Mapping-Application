@@ -110,26 +110,25 @@ The application utilizes **Folium** to plot supply and demand points on a map, w
 ### Demand Data (`demand_data.csv`):
 | Location | Latitude  | Longitude | Demand |
 |----------|-----------|-----------|--------|
-| Demand1  | 34.0522   | -118.2437 | 40     |
-| Demand2  | 36.7783   | -119.4179 | 50     |
+| client1  | 34.0522   | -118.2437 | 40     |
+| client2  | 36.7783   | -119.4179 | 50     |
 
 ### Driver Data (`driver_data.csv`):
-| DriverID | Max Load (units) | Working Hours |
-|----------|------------------|---------------|
-| Driver1  | 10               | 8             |
-| Driver2  | 15               | 10            |
+| DriverID | Working Hours  | Max Load (units) |
+|----------|----------------|------------------|
+| Driver1  | 10             | 8                |
+| Driver2  | 15             | 10               |
 
 ### Cost Data (`cost_data.csv`):
-| From / To | Demand1 | Demand2 |
-|-----------|---------|---------|
-| Supply1   | 100     | 150     |
-| Supply2   | 120     | 140     |
+| Client1 | Client2 | Client3 |
+|---------|---------|---------|
+| 200     | 100     | 150     |
+| 300     | 120     | 140     |
 
-## License
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
 ## Acknowledgments
 - **PuLP** for Linear Programming formulation.
 - **OpenRouteService** for travel time and distance calculation.
 - **Folium** for map visualization.
+- **Stramli** for web app deployment.
 
