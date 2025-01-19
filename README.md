@@ -18,7 +18,9 @@ Let:
 $$
 S_i \text{ be the supply at supply point } i \text{ for } i = 1, 2, \dots, m
 $$
-- \( D_j \) be the demand at demand point \( j \) for \( j = 1, 2, \dots, n \)
+$$
+S_i \( D_j \) be the demand at demand point \( j \) for \( j = 1, 2, \dots, n \)
+$$
 - \( C_{ij} \) be the cost of transporting from supply point \( i \) to demand point \( j \)
 - \( x_{ijk} \) be the quantity of goods transported from supply point \( i \) to demand point \( j \) by driver \( k \)
 - \( y_{ijk} \) be a binary variable indicating whether driver \( k \) delivers goods from supply point \( i \) to demand point \( j \)
