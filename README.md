@@ -15,14 +15,35 @@ This system implements a **Transportation Allocation Problem** using **Linear Pr
 
 Let:
 
-- $\( S_i ) is the supply at supply point ( i ) for ( i = 1, 2, dots, m )$
-- $\( D_j \) is the demand at demand point \( j \) for \( j = 1, 2, \dots, n \).$
-- $\( C_{ij} \) is the cost of transporting from supply point \( i \) to demand point \( j \).$
-- $\( x_{ijk} \) is the quantity of goods transported from supply point \( i \) to demand point \( j \) by driver \( k \).$
-- $\( y_{ijk} \) is a binary variable indicating whether driver \( k \) delivers goods from supply point \( i \) to demand point \( j \).$
-- $\( T_{ij} \) is the travel time (in hours) from supply point \( i \) to demand point \( j \).$
-- $\( H_k \) is the maximum working hours available for driver \( k \).$
-- $\( Q_k \) is the maximum load capacity for driver \( k \).$
+- $$ S_i \text{ is the supply at supply point } i \text{ for } i = 1, 2, \dots, m $
+
+$$
+D_j \text{ is the demand at demand point } j \text{ for } j = 1, 2, \dots, n
+$$
+
+$$
+C_{ij} \text{ is the cost of transporting from supply point } i \text{ to demand point } j
+$$
+
+$$
+x_{ijk} \text{ is the quantity of goods transported from supply point } i \text{ to demand point } j \text{ by driver } k
+$$
+
+$$
+y_{ijk} \text{ is a binary variable indicating whether driver } k \text{ delivers goods from supply point } i \text{ to demand point } j
+$$
+
+$$
+T_{ij} \text{ is the travel time (in hours) from supply point } i \text{ to demand point } j
+$$
+
+$$
+H_k \text{ is the maximum working hours available for driver } k
+$$
+
+$$
+Q_k \text{ is the maximum load capacity for driver } k
+$$
 
 
 ### Decision Variables:
