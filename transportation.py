@@ -194,7 +194,7 @@ if supply_data is not None and demand_data is not None and driver_data is not No
             demand_point_num += 1
     
         # Mapping supply-demand pair to a unique color (same color for each driver)
-        driver_colors = {}
+        supply_colors = {}
     
         # Fetch and draw routes between supply and demand
         for route_info in saved_routes:
@@ -202,11 +202,11 @@ if supply_data is not None and demand_data is not None and driver_data is not No
             demand_index = route_info['demand'] - 1  # Adjust index (0-based)
     
             # Create a unique identifier for this driver
-            driver_id = route_info['supply']
+            supply_id = route_info['supply']
     
             # If this driver hasn't been assigned a color, assign one
             if driver_id not in driver_colors:
-                driver_colors[driver_id] = generate_random_color()
+                supply_colors[supply_id] = generate_random_color()
     
             # Get route data from ORS
             try:
@@ -235,7 +235,7 @@ if supply_data is not None and demand_data is not None and driver_data is not No
                     popup_content += "</ul>"
     
                     # Use the preassigned color for this driver
-                    route_color = driver_colors[driver_id]
+                    route_color = supply_colors[supply_id]
     
                     # Add the route to the map
                     folium.PolyLine(
