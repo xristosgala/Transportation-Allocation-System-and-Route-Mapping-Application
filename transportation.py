@@ -26,6 +26,8 @@ if supply_data is not None and demand_data is not None and driver_data is not No
 
     st.success("All files uploaded successfully!")
 
+    st.write(st.secrets)
+
 
     # Access the API key securely from Streamlit secrets
     api_key = st.secrets["API_KEY"]
