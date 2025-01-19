@@ -15,9 +15,9 @@ This system implements a **Transportation Allocation Problem** using **Linear Pr
 
 Let:
 
-$$
+$
 S_i \text{ be the supply at supply point } i \text{ for } i = 1, 2, \dots, m
-$$
+$
 $$
 S_i \( D_j \) be the demand at demand point \( j \) for \( j = 1, 2, \dots, n \)
 $$
