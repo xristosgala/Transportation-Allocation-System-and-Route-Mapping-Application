@@ -30,13 +30,7 @@ if supply_data is not None and demand_data is not None and driver_data is not No
 
 
     # Access the API key securely from Streamlit secrets
-    api_key = st.secrets["API_KEY"]
-
-    # Check if API key exists
-    if api_key:
-        st.write("API Key loaded successfully!")  # This is a confirmation message (do not print the key itself)
-    else:
-        st.write("API Key not found!")
+    api_key = st.secrets["api_key"]
     
     # Initialize ORS client
     client = openrouteservice.Client(key=api_key)
