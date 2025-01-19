@@ -27,9 +27,7 @@ if supply_data is not None and demand_data is not None and driver_data is not No
     st.success("All files uploaded successfully!")
 
     # Access the API key from the environment
-    api_key = os.getenv("API_KEY")
-
-    st.write(api_key)
+    api_key = st.secrets["API_KEY"]
 
     # Initialize ORS client
     client = openrouteservice.Client(key=api_key)
