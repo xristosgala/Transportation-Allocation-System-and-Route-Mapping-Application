@@ -16,17 +16,17 @@ This system implements a **Transportation Allocation Problem** using **Linear Pr
 Let:
 
 - $S_i$ is the supply at supply point $i$, for $i = 1, 2, \dots, m$.
-- $\( D_j \) is the demand at demand point \( j \) for \( j = 1, 2, \dots, n \)$
-- $\( C_{ij} \) is the cost of transporting from supply point \( i \) to demand point \( j \)$
-- $\( x_{ijk} \) is the quantity of goods transported from supply point \( i \) to demand point \( j \) by driver \( k \)$
-- $\( y_{ijk} \) is a binary variable indicating whether driver \( k \) delivers goods from supply point \( i \) to demand point \( j \)$
-- $\( T_{ij} \) is the travel time (in hours) from supply point \( i \) to demand point \( j \)$
-- $\( H_k \) is the maximum working hours available for driver \( k \)$
-- $\( Q_k \) is the maximum load capacity for driver \( k \)$
+- $D_j$ is the demand at demand point $j$, for $j = 1, 2, \dots, n$.
+- $C_{ij}$ is the cost of transporting from supply point $i$ to demand point $j$.
+- $x_{ijk}$ is the quantity of goods transported from supply point $i$ to demand point $j$ by driver $k$.
+- $y_{ijk}$ is a binary variable indicating whether driver $k$ delivers goods from supply point $i$ to demand point $j$.
+- $T_{ij}$ is the travel time (in hours) from supply point $i$ to demand point $j$.
+- $H_k$ is the maximum working hours available for driver $k$.
+- $Q_k$ is the maximum load capacity for driver $k$.
 
 ### Decision Variables:
-- $\( x_{ijk} \): Continuous decision variable representing the quantity delivered by driver \( k \) from supply point \( i \) to demand point \( j \).$
-- $\( y_{ijk} \): Binary decision variable representing whether driver \( k \) is assigned to deliver from supply point \( i \) to demand point \( j \).$
+- $x_{ijk}$: Continuous decision variable representing the quantity delivered by driver $k$ from supply point $i$ to demand point $j$.
+- $y_{ijk}$: Binary decision variable representing whether driver $k$ is assigned to deliver from supply point $i$ to demand point $j$.
 
 ### Objective Function:
 Minimize the total transportation cost:
