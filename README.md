@@ -23,7 +23,7 @@ Let:
 - \( T_{ij} \) be the travel time (in hours) from supply point \( i \) to demand point \( j \)
 - \( H_k \) be the maximum working hours available for driver \( k \)
 - \( Q_k \) be the maximum load capacity for driver \( k \)
-- 
+
 ### Decision Variables:
 - \( x_{ijk} \): Continuous decision variable representing the quantity delivered by driver \( k \) from supply point \( i \) to demand point \( j \).
 - \( y_{ijk} \): Binary decision variable representing whether driver \( k \) is assigned to deliver from supply point \( i \) to demand point \( j \).
