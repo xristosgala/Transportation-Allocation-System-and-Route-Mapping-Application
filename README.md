@@ -65,8 +65,8 @@ $$
 x_{ijk} \leq Q_k \quad \forall i, j, k
 $$
 
-5. **Link between \( x_{ijk} \) and \( y_{ijk} \):**
-   Ensure that \( x_{ijk} > 0 \) only if driver \( k \) is assigned to the route from supply point \( i \) to demand point \( j \):
+5. **Link between $x_{ijk}$ and $y_{ijk}$:**
+   Ensure that $x_{ijk} > 0$ only if driver $k$ is assigned to the route from supply point $i$ to demand point $j$:
 
 $$
 x_{ijk} \leq y_{ijk} \cdot D_j \quad \forall i, j, k
