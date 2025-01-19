@@ -14,7 +14,9 @@ This system implements a **Transportation Allocation Problem** using **Linear Pr
 ## Mathematical Formulation (Linear Programming Model)
 
 Let:
-- $$ \( S_i \) be the supply at supply point \( i \) for \( i = 1, 2, \dots, m \) $$
+- $$
+\( S_i \) be the supply at supply point \( i \) for \( i = 1, 2, \dots, m \)
+$$
 - $$ \( D_j \) be the demand at demand point \( j \) for \( j = 1, 2, \dots, n \) $$
 - $$ \( C_{ij} \) be the cost of transporting from supply point \( i \) to demand point \( j \) $$
 - $$ \( x_{ijk} \) be the quantity of goods transported from supply point \( i \) to demand point \( j \) by driver \( k \) $$
