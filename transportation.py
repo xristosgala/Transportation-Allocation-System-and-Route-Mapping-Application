@@ -1,3 +1,4 @@
+%%writefile transportation.py
 import streamlit as st
 import pandas as pd
 import openrouteservice
@@ -26,8 +27,8 @@ if supply_data is not None and demand_data is not None and driver_data is not No
 
     st.success("All files uploaded successfully!")
 
-    # ORS API Key
-    api_key = "XXX"  # Replace with your actual API key
+    # Access the API key from the environment
+    api_key = os.getenv("API_KEY")
 
     # Initialize ORS client
     client = openrouteservice.Client(key=api_key)
