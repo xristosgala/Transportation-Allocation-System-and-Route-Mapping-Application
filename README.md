@@ -15,18 +15,20 @@ This system implements a **Transportation Allocation Problem** using **Linear Pr
 
 Let:
 
-- **\( S_i \)** be the supply at supply point \( i \) for \( i = 1, 2, \dots, m \)
-- **\( D_j \)** be the demand at demand point \( j \) for \( j = 1, 2, \dots, n \)
-- **\( C_{ij} \)** be the cost of transporting from supply point \( i \) to demand point \( j \)
-- **\( x_{ijk} \)** be the quantity of goods transported from supply point \( i \) to demand point \( j \) by driver \( k \)
-- **\( y_{ijk} \)** be a binary variable indicating whether driver \( k \) delivers goods from supply point \( i \) to demand point \( j \)
-- **\( T_{ij} \)** be the travel time (in hours) from supply point \( i \) to demand point \( j \)
-- **\( H_k \)** be the maximum working hours available for driver \( k \)
-- **\( Q_k \)** be the maximum load capacity for driver \( k \)
+Let:
+
+- \( S_i \) be the supply at supply point \( i \) for \( i = 1, 2, \dots, m \)
+- \( D_j \) be the demand at demand point \( j \) for \( j = 1, 2, \dots, n \)
+- \( C_{ij} \) be the cost of transporting from supply point \( i \) to demand point \( j \)
+- \( x_{ijk} \) be the quantity of goods transported from supply point \( i \) to demand point \( j \) by driver \( k \)
+- \( y_{ijk} \) be a binary variable indicating whether driver \( k \) delivers goods from supply point \( i \) to demand point \( j \)
+- \( T_{ij} \) be the travel time (in hours) from supply point \( i \) to demand point \( j \)
+- \( H_k \) be the maximum working hours available for driver \( k \)
+- \( Q_k \) be the maximum load capacity for driver \( k \)
 
 ### Decision Variables:
-- **\( x_{ijk} \)** - Continuous decision variable representing the quantity delivered by driver \( k \) from supply point \( i \) to demand point \( j \).
-- **\( y_{ijk} \)** - Binary decision variable representing whether driver \( k \) is assigned to deliver from supply point \( i \) to demand point \( j \).
+- \( x_{ijk} \): Continuous decision variable representing the quantity delivered by driver \( k \) from supply point \( i \) to demand point \( j \).
+- \( y_{ijk} \): Binary decision variable representing whether driver \( k \) is assigned to deliver from supply point \( i \) to demand point \( j \).
 
 ### Objective Function:
 Minimize the total transportation cost:
@@ -40,37 +42,37 @@ Minimize the total transportation cost:
 1. **Supply Constraints:**
    Ensure that the total amount delivered from each supply point does not exceed the supply:
 
-   \[
-   \sum_{j=1}^{n} \sum_{k=1}^{p} x_{ijk} \leq S_i \quad \forall i
-   \]
+\[
+\sum_{j=1}^{n} \sum_{k=1}^{p} x_{ijk} \leq S_i \quad \forall i
+\]
 
 2. **Demand Constraints:**
    Ensure that the total amount delivered to each demand point satisfies the demand:
 
-   \[
-   \sum_{i=1}^{m} \sum_{k=1}^{p} x_{ijk} = D_j \quad \forall j
-   \]
+\[
+\sum_{i=1}^{m} \sum_{k=1}^{p} x_{ijk} = D_j \quad \forall j
+\]
 
 3. **Driver Working Hours:**
    Ensure that the total time spent by each driver does not exceed their available working hours:
 
-   \[
-   \sum_{i=1}^{m} \sum_{j=1}^{n} y_{ijk} \cdot T_{ij} \leq H_k \quad \forall k
-   \]
+\[
+\sum_{i=1}^{m} \sum_{j=1}^{n} y_{ijk} \cdot T_{ij} \leq H_k \quad \forall k
+\]
 
 4. **Driver Capacity:**
    Ensure that the total quantity delivered by each driver does not exceed their load capacity:
 
-   \[
-   x_{ijk} \leq Q_k \quad \forall i, j, k
-   \]
+\[
+x_{ijk} \leq Q_k \quad \forall i, j, k
+\]
 
 5. **Link between \( x_{ijk} \) and \( y_{ijk} \):**
    Ensure that \( x_{ijk} > 0 \) only if driver \( k \) is assigned to the route from supply point \( i \) to demand point \( j \):
 
-   \[
-   x_{ijk} \leq y_{ijk} \cdot D_j \quad \forall i, j, k
-   \]
+\[
+x_{ijk} \leq y_{ijk} \cdot D_j \quad \forall i, j, k
+\]
 
 ### Solving the Model:
 The problem is solved using **PuLP**'s **LpProblem** method, which uses available solvers (e.g., CBC) to find the optimal solution.
