@@ -29,6 +29,8 @@ if supply_data is not None and demand_data is not None and driver_data is not No
     # Access the API key from the environment
     api_key = os.getenv("API_KEY")
 
+    print(api_key)
+
     # Initialize ORS client
     client = openrouteservice.Client(key=api_key)
 
