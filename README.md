@@ -14,9 +14,6 @@ This system implements a **Transportation Allocation Problem** using **Linear Pr
 ## Mathematical Formulation (Linear Programming Model)
 
 Let:
-
-Let:
-
 - \( S_i \) be the supply at supply point \( i \) for \( i = 1, 2, \dots, m \)
 - \( D_j \) be the demand at demand point \( j \) for \( j = 1, 2, \dots, n \)
 - \( C_{ij} \) be the cost of transporting from supply point \( i \) to demand point \( j \)
@@ -33,46 +30,46 @@ Let:
 ### Objective Function:
 Minimize the total transportation cost:
 
-\[
+$$
 \min Z = \sum_{i=1}^{m} \sum_{j=1}^{n} \sum_{k=1}^{p} x_{ijk} \cdot C_{ij}
-\]
+$$
 
 ### Constraints:
 
 1. **Supply Constraints:**
    Ensure that the total amount delivered from each supply point does not exceed the supply:
 
-\[
+$$
 \sum_{j=1}^{n} \sum_{k=1}^{p} x_{ijk} \leq S_i \quad \forall i
-\]
+$$
 
 2. **Demand Constraints:**
    Ensure that the total amount delivered to each demand point satisfies the demand:
 
-\[
+$$
 \sum_{i=1}^{m} \sum_{k=1}^{p} x_{ijk} = D_j \quad \forall j
-\]
+$$
 
 3. **Driver Working Hours:**
    Ensure that the total time spent by each driver does not exceed their available working hours:
 
-\[
+$$
 \sum_{i=1}^{m} \sum_{j=1}^{n} y_{ijk} \cdot T_{ij} \leq H_k \quad \forall k
-\]
+$$
 
 4. **Driver Capacity:**
    Ensure that the total quantity delivered by each driver does not exceed their load capacity:
 
-\[
+$$
 x_{ijk} \leq Q_k \quad \forall i, j, k
-\]
+$$
 
 5. **Link between \( x_{ijk} \) and \( y_{ijk} \):**
    Ensure that \( x_{ijk} > 0 \) only if driver \( k \) is assigned to the route from supply point \( i \) to demand point \( j \):
 
-\[
+$$
 x_{ijk} \leq y_{ijk} \cdot D_j \quad \forall i, j, k
-\]
+$$
 
 ### Solving the Model:
 The problem is solved using **PuLP**'s **LpProblem** method, which uses available solvers (e.g., CBC) to find the optimal solution.
