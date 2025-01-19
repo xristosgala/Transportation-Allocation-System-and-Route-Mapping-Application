@@ -204,8 +204,8 @@ if supply_data is not None and demand_data is not None and driver_data is not No
             # Create a unique identifier for this driver
             supply_id = route_info['supply']
     
-            # If this driver hasn't been assigned a color, assign one
-            if driver_id not in driver_colors:
+            # If this supplier hasn't been assigned a color, assign one
+            if supply_id not in supply_colors:
                 supply_colors[supply_id] = generate_random_color()
     
             # Get route data from ORS
@@ -234,7 +234,7 @@ if supply_data is not None and demand_data is not None and driver_data is not No
                             popup_content += f"<li>Driver {other_route['driver']}: {other_route['quantity']} quantity</li>"
                     popup_content += "</ul>"
     
-                    # Use the preassigned color for this driver
+                    # Use the preassigned color for this supplier
                     route_color = supply_colors[supply_id]
     
                     # Add the route to the map
