@@ -202,7 +202,7 @@ if supply_data is not None and demand_data is not None and driver_data is not No
             demand_index = route_info['demand'] - 1  # Adjust index (0-based)
     
             # Create a unique identifier for this driver
-            driver_id = route_info['driver']
+            driver_id = route_info['supply']
     
             # If this driver hasn't been assigned a color, assign one
             if driver_id not in driver_colors:
