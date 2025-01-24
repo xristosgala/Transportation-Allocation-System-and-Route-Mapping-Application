@@ -6,6 +6,8 @@ This system implements a **Transportation Allocation Problem** using **Linear Pr
 
 👉 **Try the app here:** [Optimized Transportation Allocation System and Route Mapping](https://optimized-transportation-allocation-system-and-route-mapping.streamlit.app)
 
+---
+
 ## Features
 - **Data Upload:** Users can upload four CSV files containing **supply data**, **demand data**, **driver data**, and **cost data**.
 - **Optimization Model:** The system formulates and solves an LP model that minimizes transportation costs while satisfying all constraints (e.g., supply, demand, working hours, and capacity).
