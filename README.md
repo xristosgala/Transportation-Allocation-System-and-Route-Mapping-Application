@@ -1,4 +1,4 @@
-# Optimized Transportation Allocation System and Route Mapping App
+# Transportation Allocation System and Route Mapping App
 
 ## Overview
 
