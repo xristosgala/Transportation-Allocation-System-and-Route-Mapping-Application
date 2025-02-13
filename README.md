@@ -134,5 +134,5 @@ The application utilizes **Folium** to plot supply and demand points on a map, w
 - **PuLP** for Linear Programming formulation.
 - **OpenRouteService** for travel time and distance calculation.
 - **Folium** for map visualization.
-- **Stramlit** for web app deployment.
+- **Streamlit** for web app deployment.
 
